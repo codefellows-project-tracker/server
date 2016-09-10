@@ -5,7 +5,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test/"
   },
   "repository": {
     "type": "git",
@@ -19,7 +19,12 @@
   "homepage": "https://github.com/giodamelio/server#readme",
   "devDependencies": {
     "@giodamelio/eslint-config": "^0.2.1",
+    "chai": "^3.5.0",
     "eslint": "^3.5.0",
-    "eslint-plugin-import": "^1.14.0"
+    "eslint-plugin-import": "^1.14.0",
+    "mocha": "^3.0.2"
+  },
+  "dependencies": {
+    "mongoose": "^4.6.0"
   }
 }

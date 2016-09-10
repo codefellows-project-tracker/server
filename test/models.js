@@ -1,0 +1,56 @@
+const mongoose = require('mongoose');
+const chai = require('chai');
+
+const User = require('../src/models/user');
+const Project = require('../src/models/project');
+
+mongoose.Promise = Promise;
+const expect = chai.expect;
+
+describe('Test models', () => {
+  before((done) => {
+    mongoose.connect('mongodb://localhost/cptTest', (err) => {
+      if (err) {
+        throw err;
+      }
+      done();
+    });
+  });
+
+  afterEach(() => Promise.all([
+    User.remove({}),
+    Project.remove({}),
+  ]));
+
+  it('should create user and project', () => {
+    const user = new User({
+      name: 'Gio',
+      email: 'giodamelio@gmail.com',
+      password: 'hunter2',
+    });
+
+    return user.save()
+      .then((newUser) => {
+        expect(newUser.id).to.exist;
+        expect(newUser.name).to.equal('Gio');
+
+        const project = new Project({
+          name: 'Code Fellows Project Tracker',
+          users: [newUser.id],
+          description: 'The best project EVER!',
+          hostedUrl: 'https://giodamelio.com',
+          classType: 'Javascript 401',
+          classNumber: 'd8',
+        });
+
+        return project.save()
+          .then(() => Project.find()
+            .populate('users')
+          )
+          .then((projects) => {
+            expect(projects[0].users[0].id).to.exist;
+            expect(projects[0].users[0].name).to.equal('Gio');
+          });
+      });
+  });
+});

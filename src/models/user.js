@@ -9,10 +9,6 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  projects: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Project',
-  }],
   photo: {
     type: String,
     required: false,
