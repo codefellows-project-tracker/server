@@ -50,6 +50,7 @@ describe('Test models', () => {
           .then((projects) => {
             expect(projects[0].users[0].id).to.exist;
             expect(projects[0].users[0].name).to.equal('Gio');
+            expect(projects[0].users[0].password).to.not.equal('hunter2');
           });
       });
   });
