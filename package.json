@@ -16,5 +16,10 @@
   "bugs": {
     "url": "https://github.com/giodamelio/server/issues"
   },
-  "homepage": "https://github.com/giodamelio/server#readme"
+  "homepage": "https://github.com/giodamelio/server#readme",
+  "devDependencies": {
+    "@giodamelio/eslint-config": "^0.2.1",
+    "eslint": "^3.5.0",
+    "eslint-plugin-import": "^1.14.0"
+  }
 }
