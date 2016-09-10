@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -23,5 +24,34 @@ const UserSchema = new mongoose.Schema({
     required: true,
   },
 });
+
+UserSchema.pre('save', function(next) {
+  if (!this.isModified('password')) {
+    return next();
+  }
+
+  return bcrypt.hash(this.password, 8, (err, hashedPassword) => {
+    if (err) {
+      return next(err);
+    }
+
+    this.password = hashedPassword;
+    return next();
+  });
+});
+
+UserSchema.methods.comparePassword = function(password) {
+  return new Promise((resolve, reject) => {
+    bcrypt.compare(password, this.password, (err, data) => {
+      if (err) {
+        return reject(err);
+      }
+      if (data === false) {
+        return reject(new Error('Password did not match'));
+      }
+      return resolve(this);
+    });
+  });
+};
 
 module.exports = mongoose.model('User', UserSchema);
