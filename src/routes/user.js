@@ -26,4 +26,19 @@ router.post('/', (req, res) => {
     res.json(newUser);
   });
 });
+router.put('/:id', (req, res) => {
+  User.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true })
+  .then((updatedUser) => {
+    res.json(updatedUser);
+  })
+  .catch(() => {
+    res.status(500).json({ message: 'ERROR!!!' });
+  });
+});
+router.delete('/:id', (req, res) => {
+  User.remove({ _id: req.params.id })
+  .then((deleteUser) => {
+    res.json(deleteUser);
+  });
+});
 module.exports = router;
