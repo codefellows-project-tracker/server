@@ -1,17 +1,19 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-require('./models/user');
-require('./models/project');
+const userRouter = require('./routes/user');
 
 const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get('/url', (req, res) => {
-  res.write('YAY');
-});
+// Mount the api routes
+const apiRouter = new express.Router();
+apiRouter.use('/user', userRouter);
+
+// Mount the API
+app.use('/api', apiRouter);
 
 const PORT = process.env.PORT || 3141;
 app.listen(PORT, () => {
