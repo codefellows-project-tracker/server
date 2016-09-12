@@ -1,9 +1,12 @@
-const chai = require('chai');
+const supertest = require('supertest-as-promised');
 
-const expect = chai.expect;
+const server = require('../../src/server');
 
-describe('Get users', () => {
-  it('should work', () => {
-    expect(true).to.equal(true);
-  });
+describe('/api/user', () => {
+  it('should list users', () => (
+    supertest(server)
+      .get('/api/user')
+      .expect(200)
+      .expect('Hello Users')
+  ));
 });
