@@ -7,6 +7,6 @@ describe('/api/user', () => {
     supertest(server)
       .get('/api/user')
       .expect(200)
-      .expect('Hello Users')
+      .expect([])
   ));
 });
