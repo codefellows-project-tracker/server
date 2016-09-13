@@ -6,6 +6,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha test/*.js test/*/",
+    "cover": "nyc --reporter html --reporter text npm test",
     "lint": "eslint src/ test/",
     "start": "node src/index.js"
   },
@@ -22,16 +23,20 @@
   "devDependencies": {
     "@giodamelio/eslint-config": "^0.2.1",
     "chai": "^3.5.0",
+    "debug": "^2.2.0",
     "eslint": "^3.5.0",
     "eslint-plugin-import": "^1.14.0",
     "mocha": "^3.0.2",
+    "nyc": "^8.1.0",
     "supertest": "^2.0.0",
     "supertest-as-promised": "^4.0.0"
   },
   "dependencies": {
     "bcrypt": "^0.8.7",
     "body-parser": "^1.15.2",
+    "boom": "^4.0.0",
     "express": "^4.14.0",
-    "mongoose": "^4.6.0"
+    "mongoose": "^4.6.0",
+    "pretty-error": "^2.0.0"
   }
 }
