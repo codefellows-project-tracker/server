@@ -1,5 +1,4 @@
 const express = require('express');
-const debug = require('debug')('cpt:router/project');
 
 const Project = require('../models/project');
 const errorHelper = require('../errorHelper');
@@ -8,6 +7,7 @@ const router = new express.Router();
 
 router.get('/', (req, res) => {
   Project.find({})
+    .populate('users', '-password')
     .then((projects) => {
       res.json(projects);
     })
@@ -16,6 +16,7 @@ router.get('/', (req, res) => {
 
 router.get('/:id', (req, res) => {
   Project.findOne({ _id: req.params.id })
+    .populate('users', '-password')
     .then((project) => {
       if (!project) {
         return errorHelper(res, 404)(new Error('Project not found'));

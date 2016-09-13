@@ -2,25 +2,37 @@ const supertest = require('supertest-as-promised');
 const expect = require('chai').expect;
 
 const server = require('../../src/server');
+const User = require('../../src/models/user');
 const Project = require('../../src/models/project');
 
 describe('/api/project', () => {
   beforeEach(function() {
-    return new Project({
-      name: 'CPT',
-      hostedUrl: 'https://test.com',
-      githubUrl: 'https://github.com',
-      image: 'https://imgur.com/i/i.jpg',
-      description: 'This is the best project EVEAH!',
-      classType: 'Javascript 401',
-      classNumber: '8',
+    return new User({
+      name: 'Gio d\'Amelio',
+      email: 'giodamelio@gmail.com',
+      password: 'hunter2',
     }).save()
-      .then((project) => {
-        this.id = project._id;
-      });
+      .then((user) => (
+        new Project({
+          name: 'CPT',
+          hostedUrl: 'https://test.com',
+          githubUrl: 'https://github.com',
+          image: 'https://imgur.com/i/i.jpg',
+          description: 'This is the best project EVEAH!',
+          classType: 'Javascript 401',
+          classNumber: '8',
+          users: [user._id],
+        }).save()
+          .then((project) => {
+            this.id = project._id;
+          })
+      ));
   });
 
-  afterEach(() => Project.remove({}));
+  afterEach(() => Promise.all([
+    User.remove({}),
+    Project.remove({}),
+  ]));
 
   describe('GET', () => {
     it('should list projects', () => (
@@ -29,6 +41,7 @@ describe('/api/project', () => {
         .expect(200)
         .then((res) => {
           expect(res.body[0].name).to.equal('CPT');
+          expect(res.body[0].users[0].password).to.not.exist;
         })
     ));
 
@@ -38,6 +51,7 @@ describe('/api/project', () => {
         .expect(200)
         .then((res) => {
           expect(res.body.name).to.equal('CPT');
+          expect(res.body.users[0].password).to.not.exist;
         });
     });
 
@@ -72,7 +86,6 @@ describe('/api/project', () => {
           description: 'This is the best2 project EVEAH!',
           classType: 'Javascript 401',
           classNumber: '8',
-
         })
 	.expect(200)
         .expect((res) => {
@@ -107,6 +120,7 @@ describe('/api/project', () => {
         .expect(200)
         .then((res) => {
           expect(res.body.name).to.equal('HAHA');
+          expect(res.body.users[0].password).to.not.exist;
         });
     });
 
