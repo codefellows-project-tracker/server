@@ -2,6 +2,7 @@ const express = require('express');
 const debug = require('debug')('cpt:router/user');
 
 const User = require('../models/user');
+const errorHelper = require('../errorHelper');
 
 const router = new express.Router();
 
@@ -10,20 +11,22 @@ router.get('/', (req, res) => {
     .then((users) => {
       res.json(users);
     })
-    .catch((err) => {
-      debug(err);
-      res.status(500).json({ message: 'ERROR!!!' });
-    });
+    .catch(errorHelper(res, 500));
 });
 
 router.get('/:id', (req, res) => {
   User.findOne({ _id: req.params.id })
     .then((user) => {
-      res.json(user);
+      if (!user) {
+        return errorHelper(res, 404)(new Error('User not found'));
+      }
+      return res.json(user);
     })
     .catch((err) => {
-      debug(err);
-      res.status(500).json({ message: 'ERROR!!!' });
+      if (err.name === 'CastError') {
+        return errorHelper(res, 404)(err);
+      }
+      return errorHelper(res, 500)(err);
     });
 });
 
@@ -34,30 +37,42 @@ router.post('/', (req, res) => {
       res.json(newUser);
     })
     .catch((err) => {
-      debug(err);
-      res.status(500).json({ message: 'ERROR!!!' });
+      if (err.name === 'MongoError' || err.code === 11000) {
+        return errorHelper(res, 400, 'Duplicate key')(err);
+      }
+      return errorHelper(res, 500)(err);
     });
 });
 
 router.put('/:id', (req, res) => {
   User.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true })
     .then((updatedUser) => {
-      res.json(updatedUser);
+      if (!updatedUser) {
+        return errorHelper(res, 404)(new Error('User not found'));
+      }
+      return res.json(updatedUser);
     })
     .catch((err) => {
-      debug(err);
-      res.status(500).json({ message: 'ERROR!!!' });
+      if (err.name === 'CastError') {
+        return errorHelper(res, 404)(err);
+      }
+      return errorHelper(res, 500)(err);
     });
 });
 
 router.delete('/:id', (req, res) => {
   User.remove({ _id: req.params.id })
     .then((deleteUser) => {
-      res.json(deleteUser);
+      if (deleteUser.result.n === 0) {
+        return errorHelper(res, 404)(new Error('User not found'));
+      }
+      return res.json(deleteUser);
     })
     .catch((err) => {
-      debug(err);
-      res.status(500).json({ message: 'ERROR!!!' });
+      if (err.name === 'CastError') {
+        return errorHelper(res, 404)(err);
+      }
+      return errorHelper(res, 500)(err);
     });
 });
 
