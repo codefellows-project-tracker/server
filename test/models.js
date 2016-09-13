@@ -39,6 +39,7 @@ describe('Test models', () => {
           users: [newUser.id],
           description: 'The best project EVER!',
           hostedUrl: 'https://giodamelio.com',
+          githubUrl: 'https://github.com/codefellows-project-tracker',
           classType: 'Javascript 401',
           classNumber: 'd8',
         });
