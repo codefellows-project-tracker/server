@@ -1,22 +1,11 @@
-const mongoose = require('mongoose');
 const chai = require('chai');
 
 const User = require('../src/models/user');
 const Project = require('../src/models/project');
 
-mongoose.Promise = Promise;
 const expect = chai.expect;
 
 describe('Test models', () => {
-  before((done) => {
-    mongoose.connect('mongodb://localhost/cptTest', (err) => {
-      if (err) {
-        throw err;
-      }
-      done();
-    });
-  });
-
   afterEach(() => Promise.all([
     User.remove({}),
     Project.remove({}),
