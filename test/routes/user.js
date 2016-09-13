@@ -25,6 +25,7 @@ describe('/api/user', () => {
         .expect(200)
         .then((res) => {
           expect(res.body[0].name).to.equal('Gio d\'Amelio');
+          expect(res.body[0].password).to.not.exist;
         })
     ));
 
@@ -34,6 +35,7 @@ describe('/api/user', () => {
         .expect(200)
         .then((res) => {
           expect(res.body.name).to.equal('Gio d\'Amelio');
+          expect(res.body.password).to.not.exist;
         });
     });
 
@@ -68,6 +70,7 @@ describe('/api/user', () => {
 	.expect(200)
         .expect((res) => {
           expect(res.body._id).to.exist;
+          expect(res.body.password).to.not.exist;
         })
     ));
 
@@ -94,6 +97,7 @@ describe('/api/user', () => {
         .expect(200)
         .then((res) => {
           expect(res.body.name).to.equal('HAHA');
+          expect(res.body.password).to.not.exist;
         });
     });
 

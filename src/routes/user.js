@@ -7,6 +7,7 @@ const router = new express.Router();
 
 router.get('/', (req, res) => {
   User.find({})
+    .select('-password')
     .then((users) => {
       res.json(users);
     })
@@ -15,6 +16,7 @@ router.get('/', (req, res) => {
 
 router.get('/:id', (req, res) => {
   User.findOne({ _id: req.params.id })
+    .select('-password')
     .then((user) => {
       if (!user) {
         return errorHelper(res, 404)(new Error('User not found'));
@@ -33,6 +35,7 @@ router.post('/', (req, res) => {
   const user = new User(req.body);
   user.save()
     .then((newUser) => {
+      newUser.password = undefined; // eslint-disable-line no-param-reassign
       res.json(newUser);
     })
     .catch((err) => {
@@ -49,6 +52,7 @@ router.put('/:id', (req, res) => {
       if (!updatedUser) {
         return errorHelper(res, 404)(new Error('User not found'));
       }
+      updatedUser.password = undefined; // eslint-disable-line no-param-reassign
       return res.json(updatedUser);
     })
     .catch((err) => {
