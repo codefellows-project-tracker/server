@@ -46,7 +46,7 @@ apiRouter.post('/login', (req, res, next) => {
     if (err) return next(err);
     if (!user) return res.status(401).json({ error: 'Username or password is incorrect' });
 
-    const token = jwt.sign({ username: 'test' }, 'shhhh');
+    const token = jwt.sign({ email: user.email }, 'shhhh');
     return res.status(200).json({ token });
   })(req, res, next);
 });
