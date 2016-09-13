@@ -12,7 +12,7 @@ describe('/api/user', () => {
       password: 'hunter2',
     }).save()
       .then((user) => {
-        this.id = user._id; // eslint-disable-line no-underscore-dangle
+        this.id = user._id;
       });
   });
 
@@ -52,6 +52,36 @@ describe('/api/user', () => {
         .expect(404)
         .then((res) => {
           expect(res.body.message).to.contain('Cast to ObjectId');
+        })
+    ));
+  });
+
+  describe('POST', () => {
+    it('should create new user', () => (
+      supertest(server)
+	.post('/api/user')
+        .send({
+          name: 'Test',
+          email: 'test@test.com',
+          password: 'hunter2',
+        })
+	.expect(200)
+        .expect((res) => {
+          expect(res.body._id).to.exist;
+        })
+    ));
+
+    it('should error on duplicate keys', () => (
+      supertest(server)
+        .post('/api/user')
+        .send({
+          name: 'Gio d\'Amelio',
+          email: 'giodamelio@gmail.com',
+          password: 'hunter2',
+        })
+        .expect(400)
+        .expect((res) => {
+          expect(res.body.message).to.contain('duplicate key error');
         })
     ));
   });

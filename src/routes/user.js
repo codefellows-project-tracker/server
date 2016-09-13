@@ -37,7 +37,7 @@ router.post('/', (req, res) => {
       res.json(newUser);
     })
     .catch((err) => {
-      if (err.name === 'MongoError' || err.code === 11000) {
+      if (err.name === 'MongoError' && err.code === 11000) {
         return errorHelper(res, 400, 'Duplicate key')(err);
       }
       return errorHelper(res, 500)(err);
