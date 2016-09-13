@@ -23,6 +23,7 @@
   "devDependencies": {
     "@giodamelio/eslint-config": "^0.2.1",
     "chai": "^3.5.0",
+    "debug": "^2.2.0",
     "eslint": "^3.5.0",
     "eslint-plugin-import": "^1.14.0",
     "mocha": "^3.0.2",
