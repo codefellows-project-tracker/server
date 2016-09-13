@@ -5,7 +5,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/*.js test/*/",
+    "test": "mocha -r test/databaseConnect.js test/*.js test/*/",
     "cover": "nyc --reporter html --reporter text npm test",
     "lint": "eslint src/ test/",
     "start": "node src/index.js"
