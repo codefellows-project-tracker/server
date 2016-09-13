@@ -1,5 +1,4 @@
 const express = require('express');
-const debug = require('debug')('cpt:router/user');
 
 const User = require('../models/user');
 const errorHelper = require('../errorHelper');
