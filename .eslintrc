@@ -1,3 +1,6 @@
 {
-  "extends": "@giodamelio/eslint-config"
+  "extends": "@giodamelio/eslint-config",
+  "rules": {
+    "no-underscore-dangle": "off"
+  }
 }

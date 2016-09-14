@@ -35,11 +35,19 @@
     "bcrypt": "^0.8.7",
     "body-parser": "^1.15.2",
     "boom": "^4.0.0",
+    "chalk": "^1.1.3",
+    "cli-table": "^0.3.1",
+    "envalid": "^2.2.0",
     "express": "^4.14.0",
     "jsonwebtoken": "^7.1.9",
     "mongoose": "^4.6.0",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
-    "pretty-error": "^2.0.0"
+    "pretty-error": "^2.0.0",
+    "vantage": "^1.7.0"
+  },
+  "engines": {
+    "node": "6.x",
+    "npm": "3.x"
   }
 }
