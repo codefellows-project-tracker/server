@@ -13,19 +13,33 @@ describe('/api/project', () => {
       password: 'hunter2',
     }).save()
       .then((user) => (
-        new Project({
-          name: 'CPT',
-          hostedUrl: 'https://test.com',
-          githubUrl: 'https://github.com',
-          image: 'https://imgur.com/i/i.jpg',
-          description: 'This is the best project EVEAH!',
-          classType: 'Javascript 401',
-          classNumber: '8',
-          users: [user._id],
-        }).save()
-          .then((project) => {
-            this.id = project._id;
-          })
+        Promise.all([
+          // Create a new project with our user included
+          new Project({
+            name: 'CPT',
+            hostedUrl: 'https://test.com',
+            githubUrl: 'https://github.com',
+            image: 'https://imgur.com/i/i.jpg',
+            description: 'This is the best project EVEAH!',
+            classType: 'Javascript 401',
+            classNumber: '8',
+            users: [user._id],
+          }).save()
+            .then((project) => {
+              this.id = project._id;
+            }),
+
+          // Login in and save our token
+          supertest(server)
+            .post('/api/login')
+            .send({
+              email: user.email,
+              password: 'hunter2',
+            })
+            .then((res) => {
+              this.token = res.body.token;
+            }),
+        ])
       ));
   });
 
@@ -75,9 +89,9 @@ describe('/api/project', () => {
   });
 
   describe('POST', () => {
-    it('should create new project', () => (
-      supertest(server)
-	.post('/api/project')
+    it('should create new project', function() {
+      return supertest(server)
+        .post('/api/project')
         .send({
           name: 'CPT2',
           hostedUrl: 'https://test2.com',
@@ -87,14 +101,15 @@ describe('/api/project', () => {
           classType: 'Javascript 401',
           classNumber: '8',
         })
-	.expect(200)
+        .set('Authorization', `Bearer ${this.token}`)
+        .expect(200)
         .expect((res) => {
           expect(res.body._id).to.exist;
-        })
-    ));
+        });
+    });
 
-    it('should error on duplicate keys', () => (
-      supertest(server)
+    it('should error on duplicate keys', function() {
+      return supertest(server)
         .post('/api/project')
         .send({
           name: 'CPT',
@@ -105,18 +120,20 @@ describe('/api/project', () => {
           classType: 'Javascript 401',
           classNumber: '8',
         })
-	.expect(400)
+        .set('Authorization', `Bearer ${this.token}`)
+        .expect(400)
         .expect((res) => {
           expect(res.body.message).to.contain('duplicate key error');
-        })
-    ));
+        });
+    });
   });
 
   describe('PUT', () => {
     it('should change project name', function() {
       return supertest(server)
         .put(`/api/project/${this.id}`)
-	.send({ name: 'HAHA' })
+        .send({ name: 'HAHA' })
+        .set('Authorization', `Bearer ${this.token}`)
         .expect(200)
         .then((res) => {
           expect(res.body.name).to.equal('HAHA');
@@ -124,30 +141,33 @@ describe('/api/project', () => {
         });
     });
 
-    it('should 404 on invalid project', () => (
-      supertest(server)
+    it('should 404 on invalid project', function() {
+      return supertest(server)
         .put('/api/project/57d6e7c2f532ad68ac3d9424')
-	.send({ name: 'HAHA' })
+        .send({ name: 'HAHA' })
+        .set('Authorization', `Bearer ${this.token}`)
         .expect(404)
         .then((res) => {
           expect(res.body.message).to.equal('Project not found');
-        })
-    ));
+        });
+    });
 
-    it('should 404 on invalid project id', () => (
+    it('should 404 on invalid project id', function() {
       supertest(server)
         .put('/api/project/haha')
+        .set('Authorization', `Bearer ${this.token}`)
         .expect(404)
         .then((res) => {
           expect(res.body.message).to.contain('Cast to ObjectId');
-        })
-    ));
+        });
+    });
   });
 
   describe('DELETE', () => {
     it('should delete project', function() {
       return supertest(server)
         .delete(`/api/project/${this.id}`)
+        .set('Authorization', `Bearer ${this.token}`)
         .expect(200)
         .then((res) => {
           expect(res.body.ok).to.equal(1);
@@ -155,22 +175,24 @@ describe('/api/project', () => {
         });
     });
 
-    it('should 404 on invalid project', () => (
-      supertest(server)
+    it('should 404 on invalid project', function() {
+      return supertest(server)
         .delete('/api/project/57d6e7c2f532ad68ac3d9424')
+        .set('Authorization', `Bearer ${this.token}`)
         .expect(404)
         .then((res) => {
           expect(res.body.message).to.equal('Project not found');
-        })
-    ));
+        });
+    });
 
-    it('should 404 on invalid project id', () => (
-      supertest(server)
+    it('should 404 on invalid project id', function() {
+      return supertest(server)
         .delete('/api/project/haha')
+        .set('Authorization', `Bearer ${this.token}`)
         .expect(404)
         .then((res) => {
           expect(res.body.message).to.contain('Cast to ObjectId');
-        })
-    ));
+        });
+    });
   });
 });
