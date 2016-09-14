@@ -19,5 +19,6 @@ vantage.auth('basic', {
 
 // Load vantage commands
 require('./user')(vantage);
+require('./project')(vantage);
 
 module.exports = vantage;
