@@ -5,7 +5,12 @@ const config = require('./config');
 const errorHelper = require('./errorHelper');
 
 module.exports = function IsAuthenticated(req, res, next) {
-  const token = authHeader.parse(req.get('authorization')).token;
+  const header = req.get('authorization');
+  if (!header) {
+    return errorHelper(res, 401)(new Error('Not Authorization header'));
+  }
+
+  const token = authHeader.parse(header).token;
   jwt.verify(token, config.SECRET, (err, tokenData) => {
     if (err) {
       errorHelper(res, 401)(new Error('Not authorized'));
