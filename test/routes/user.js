@@ -13,6 +13,17 @@ describe('/api/user', () => {
     }).save()
       .then((user) => {
         this.id = user._id;
+
+        // Login in and save our token
+        return supertest(server)
+          .post('/api/login')
+          .send({
+            email: user.email,
+            password: 'hunter2',
+          })
+          .then((res) => {
+            this.token = res.body.token;
+          });
       });
   });
 
@@ -90,10 +101,11 @@ describe('/api/user', () => {
   });
 
   describe('PUT', () => {
-    it('should 404 on invalid user', function() {
+    it('should update user', function() {
       return supertest(server)
         .put(`/api/user/${this.id}`)
-	.send({ name: 'HAHA' })
+        .send({ name: 'HAHA' })
+        .set('Authorization', `Bearer ${this.token}`)
         .expect(200)
         .then((res) => {
           expect(res.body.name).to.equal('HAHA');
@@ -101,30 +113,33 @@ describe('/api/user', () => {
         });
     });
 
-    it('should 404 on invalid user', () => (
-      supertest(server)
+    it('should 404 on invalid user', function() {
+      return supertest(server)
         .put('/api/user/57d6e7c2f532ad68ac3d9424')
-	.send({ name: 'HAHA' })
+        .send({ name: 'HAHA' })
+        .set('Authorization', `Bearer ${this.token}`)
         .expect(404)
         .then((res) => {
           expect(res.body.message).to.equal('User not found');
-        })
-    ));
+        });
+    });
 
-    it('should 404 on invalid user id', () => (
-      supertest(server)
+    it('should 404 on invalid user id', function() {
+      return supertest(server)
         .put('/api/user/haha')
+        .set('Authorization', `Bearer ${this.token}`)
         .expect(404)
         .then((res) => {
           expect(res.body.message).to.contain('Cast to ObjectId');
-        })
-    ));
+        });
+    });
   });
 
   describe('DELETE', () => {
-    it('should 404 on invalid user', function() {
+    it('should delete user', function() {
       return supertest(server)
         .delete(`/api/user/${this.id}`)
+        .set('Authorization', `Bearer ${this.token}`)
         .expect(200)
         .then((res) => {
           expect(res.body.ok).to.equal(1);
@@ -132,22 +147,24 @@ describe('/api/user', () => {
         });
     });
 
-    it('should 404 on invalid user', () => (
-      supertest(server)
+    it('should 404 on invalid user', function() {
+      return supertest(server)
         .delete('/api/user/57d6e7c2f532ad68ac3d9424')
+        .set('Authorization', `Bearer ${this.token}`)
         .expect(404)
         .then((res) => {
           expect(res.body.message).to.equal('User not found');
-        })
-    ));
+        });
+    });
 
-    it('should 404 on invalid user id', () => (
-      supertest(server)
+    it('should 404 on invalid user id', function() {
+      return supertest(server)
         .delete('/api/user/haha')
+        .set('Authorization', `Bearer ${this.token}`)
         .expect(404)
         .then((res) => {
           expect(res.body.message).to.contain('Cast to ObjectId');
-        })
-    ));
+        });
+    });
   });
 });
