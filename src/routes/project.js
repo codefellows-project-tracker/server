@@ -6,6 +6,14 @@ const errorHelper = require('../errorHelper');
 
 const router = new express.Router();
 
+function IsAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    next();
+  } else {
+    next(new Error(401));
+  }
+}
+
 router.get('/', (req, res) => {
   Project.find({})
     .then((projects) => {
@@ -30,7 +38,7 @@ router.get('/:id', (req, res) => {
     });
 });
 
-router.post('/', (req, res) => {
+router.post('/', IsAuthenticated, (req, res) => {
   const project = new Project(req.body);
   project.save()
     .then((newProject) => {
@@ -44,7 +52,7 @@ router.post('/', (req, res) => {
     });
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', IsAuthenticated, (req, res) => {
   Project.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true })
     .then((updatedProject) => {
       if (!updatedProject) {
@@ -60,7 +68,7 @@ router.put('/:id', (req, res) => {
     });
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', IsAuthenticated, (req, res) => {
   Project.remove({ _id: req.params.id })
     .then((deletedProject) => {
       if (deletedProject.result.n === 0) {
