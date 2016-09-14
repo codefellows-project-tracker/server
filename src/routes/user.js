@@ -32,7 +32,7 @@ router.get('/:id', (req, res) => {
     });
 });
 
-router.post('/', isAuthenticated, (req, res) => {
+router.post('/', (req, res) => {
   const user = new User(req.body);
   user.save()
     .then((newUser) => {
