@@ -1,6 +1,7 @@
 {
   "extends": "@giodamelio/eslint-config",
   "rules": {
-    "no-underscore-dangle": "off"
+    "no-underscore-dangle": "off",
+    "no-param-reassign": "off",
   }
 }
