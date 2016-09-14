@@ -4,6 +4,7 @@ const passport = require('passport');
 const PassportLocal = require('passport-local');
 const jwt = require('jsonwebtoken');
 const debug = require('debug')('cpt:server');
+const cors = require('cors');
 
 const config = require('./config');
 const userRouter = require('./routes/user');
@@ -35,6 +36,7 @@ passport.use(new PassportLocal({ usernameField: 'email' }, (email, password, don
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors());
 
 // Mount the api routes
 const apiRouter = new express.Router();
