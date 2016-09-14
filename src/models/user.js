@@ -29,6 +29,10 @@ const UserSchema = new mongoose.Schema({
     required: true,
     default: 'user',
   },
+  approved: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 UserSchema.pre('save', function(next) {

@@ -48,6 +48,10 @@ const ProjectSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  approved: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 module.exports = mongoose.model('Project', ProjectSchema);
