@@ -29,6 +29,7 @@ vantage
       .then((users) => {
         const table = new Table({
           head: [
+            'ID',
             'Name',
             'Email',
             'Approved',
@@ -38,6 +39,7 @@ vantage
 
         users.forEach((user) => {
           table.push([
+            user.id,
             user.name,
             user.email,
             user.approved ? chalk.green(user.approved) : chalk.red(user.approved),
@@ -49,5 +51,18 @@ vantage
       });
   });
 
+vantage
+  .command('user-approve <approve> <id>')
+  .description('Approve or Disapprove a user')
+  .action(function(args) {
+    return User.findOneAndUpdate({ _id: args.id }, { approved: args.approve }, { new: true })
+      .then((user) => {
+        if (user.approved) {
+          this.log(`User "${user.name}" (id: ${user._id}) is ${chalk.green('approved!')}`);
+        } else {
+          this.log(`User "${user.name}" (id: ${user._id}) is ${chalk.red.bold('disapproved!')}`);
+        }
+      });
+  });
 
 module.exports = vantage;
