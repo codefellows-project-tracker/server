@@ -2,16 +2,9 @@ const express = require('express');
 
 const User = require('../models/user');
 const errorHelper = require('../errorHelper');
+const isAuthenticated = require('../authMiddleware');
 
 const router = new express.Router();
-
-function IsAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    next();
-  } else {
-    next(new Error(401));
-  }
-}
 
 router.get('/', (req, res) => {
   User.find({})
@@ -39,7 +32,7 @@ router.get('/:id', (req, res) => {
     });
 });
 
-router.post('/', IsAuthenticated, (req, res) => {
+router.post('/', isAuthenticated, (req, res) => {
   const user = new User(req.body);
   user.save()
     .then((newUser) => {
@@ -54,7 +47,7 @@ router.post('/', IsAuthenticated, (req, res) => {
     });
 });
 
-router.put('/:id', IsAuthenticated, (req, res) => {
+router.put('/:id', isAuthenticated, (req, res) => {
   User.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true })
     .then((updatedUser) => {
       if (!updatedUser) {
@@ -71,7 +64,7 @@ router.put('/:id', IsAuthenticated, (req, res) => {
     });
 });
 
-router.delete('/:id', IsAuthenticated, (req, res) => {
+router.delete('/:id', isAuthenticated, (req, res) => {
   User.remove({ _id: req.params.id })
     .then((deleteUser) => {
       if (deleteUser.result.n === 0) {
