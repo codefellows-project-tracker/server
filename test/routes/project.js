@@ -12,35 +12,23 @@ describe('/api/project', () => {
       email: 'giodamelio@gmail.com',
       password: 'hunter2',
     }).save()
-      .then((user) => (
-        Promise.all([
+      .then((user) => {
+        this.token = user.getToken();
           // Create a new project with our user included
-          new Project({
-            name: 'CPT',
-            hostedUrl: 'https://test.com',
-            githubUrl: 'https://github.com',
-            image: 'https://imgur.com/i/i.jpg',
-            description: 'This is the best project EVEAH!',
-            classType: 'Javascript 401',
-            classNumber: '8',
-            users: [user._id],
-          }).save()
-            .then((project) => {
-              this.id = project._id;
-            }),
-
-          // Login in and save our token
-          supertest(server)
-            .post('/api/login')
-            .send({
-              email: user.email,
-              password: 'hunter2',
-            })
-            .then((res) => {
-              this.token = res.body.token;
-            }),
-        ])
-      ));
+        return new Project({
+          name: 'CPT',
+          hostedUrl: 'https://test.com',
+          githubUrl: 'https://github.com',
+          image: 'https://imgur.com/i/i.jpg',
+          description: 'This is the best project EVEAH!',
+          classType: 'Javascript 401',
+          classNumber: '8',
+          users: [user._id],
+        }).save()
+          .then((project) => {
+            this.id = project._id;
+          });
+      });
   });
 
   afterEach(() => Promise.all([
@@ -146,9 +134,9 @@ describe('/api/project', () => {
         .put('/api/project/57d6e7c2f532ad68ac3d9424')
         .send({ name: 'HAHA' })
         .set('Authorization', `Bearer ${this.token}`)
-        .expect(404)
+        .expect(401)
         .then((res) => {
-          expect(res.body.message).to.equal('Project not found');
+          expect(res.body.message).to.equal('Not Authorization');
         });
     });
 
@@ -189,9 +177,9 @@ describe('/api/project', () => {
       return supertest(server)
         .delete('/api/project/haha')
         .set('Authorization', `Bearer ${this.token}`)
-        .expect(404)
+        .expect(401)
         .then((res) => {
-          expect(res.body.message).to.contain('Cast to ObjectId');
+          expect(res.body.message).to.equal('Not Authorization');
         });
     });
   });

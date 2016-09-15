@@ -28,7 +28,7 @@ module.exports = function(roles, model) {
         return next();
       } else if (roles.includes(tokenData.role)) {
         if (model === 'user') {
-          User.findOne({ _id: tokenData._id })
+          User.findOne({ _id: req.params.id })
             .then((user) => {
               if (!user) {
                 return unauthorized();
