@@ -141,12 +141,12 @@ describe('/api/project', () => {
     });
 
     it('should 404 on invalid project id', function() {
-      supertest(server)
+      return supertest(server)
         .put('/api/project/haha')
         .set('Authorization', `Bearer ${this.token}`)
-        .expect(404)
+        .expect(401)
         .then((res) => {
-          expect(res.body.message).to.contain('Cast to ObjectId');
+          expect(res.body.message).to.contain('Not Authorization');
         });
     });
   });
