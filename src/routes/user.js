@@ -47,7 +47,7 @@ router.post('/', (req, res) => {
     });
 });
 
-router.put('/:id', isAuthenticated(['user']), (req, res) => {
+router.put('/:id', isAuthenticated(['user'], 'user'), (req, res) => {
   User.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true })
     .then((updatedUser) => {
       if (!updatedUser) {
@@ -64,7 +64,7 @@ router.put('/:id', isAuthenticated(['user']), (req, res) => {
     });
 });
 
-router.delete('/:id', isAuthenticated(['user']), (req, res) => {
+router.delete('/:id', isAuthenticated(['user'], 'user'), (req, res) => {
   User.remove({ _id: req.params.id })
     .then((deleteUser) => {
       if (deleteUser.result.n === 0) {
