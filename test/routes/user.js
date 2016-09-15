@@ -13,17 +13,7 @@ describe('/api/user', () => {
     }).save()
       .then((user) => {
         this.id = user._id;
-
-        // Login in and save our token
-        return supertest(server)
-          .post('/api/login')
-          .send({
-            email: user.email,
-            password: 'hunter2',
-          })
-          .then((res) => {
-            this.token = res.body.token;
-          });
+        this.token = user.getToken();
       });
   });
 
@@ -115,12 +105,12 @@ describe('/api/user', () => {
 
     it('should 404 on invalid user', function() {
       return supertest(server)
-        .put('/api/user/57d6e7c2f532ad68ac3d9424')
+        .put('/api/user/57d6e7c2f532de68ac3d9424')
         .send({ name: 'HAHA' })
         .set('Authorization', `Bearer ${this.token}`)
-        .expect(404)
+        .expect(401)
         .then((res) => {
-          expect(res.body.message).to.equal('User not found');
+          expect(res.body.message).to.equal('Not Authorization');
         });
     });
 
@@ -128,9 +118,9 @@ describe('/api/user', () => {
       return supertest(server)
         .put('/api/user/haha')
         .set('Authorization', `Bearer ${this.token}`)
-        .expect(404)
+        .expect(401)
         .then((res) => {
-          expect(res.body.message).to.contain('Cast to ObjectId');
+          expect(res.body.message).to.equal('Not Authorization');
         });
     });
   });
@@ -161,9 +151,9 @@ describe('/api/user', () => {
       return supertest(server)
         .delete('/api/user/haha')
         .set('Authorization', `Bearer ${this.token}`)
-        .expect(404)
+        .expect(401)
         .then((res) => {
-          expect(res.body.message).to.contain('Cast to ObjectId');
+          expect(res.body.message).to.equal('Not Authorization');
         });
     });
   });
