@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
+const config = require('../config');
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -62,6 +65,14 @@ UserSchema.methods.comparePassword = function(password) {
       return resolve(this);
     });
   });
+};
+
+UserSchema.methods.getToken = function() {
+  return jwt.sign({
+    email: this.email,
+    role: this.role,
+    _id: this._id,
+  }, config.SECRET);
 };
 
 module.exports = mongoose.model('User', UserSchema);
