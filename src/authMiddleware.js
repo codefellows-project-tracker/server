@@ -14,17 +14,18 @@ module.exports = function(...roles) {
     const token = authHeader.parse(header).token;
     jwt.verify(token, config.SECRET, (err, tokenData) => {
       if (err) {
-        errorHelper(res, 401)(new Error('Not authorized'));
-      } else {
-        if (tokenData.role === 'admin') {
-          req.user = tokenData;
-          return next();
-        } else if (roles.includes(tokenData.role)) {
-          req.user = tokenData;
-          return next();
-        }
         return errorHelper(res, 401)(new Error('Not authorized'));
       }
+
+      if (tokenData.role === 'admin') {
+        req.user = tokenData;
+        return next();
+      } else if (roles.includes(tokenData.role)) {
+        req.user = tokenData;
+        return next();
+      }
+
+      return errorHelper(res, 401)(new Error('Not authorized'));
     });
   };
 };
