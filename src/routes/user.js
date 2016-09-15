@@ -1,4 +1,5 @@
 const express = require('express');
+const mustbe = require('mustbe').routeHelpers();
 
 const User = require('../models/user');
 const errorHelper = require('../errorHelper');
@@ -46,7 +47,7 @@ router.post('/', (req, res) => {
     });
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', mustbe.authorized('user'), (req, res) => {
   User.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true })
     .then((updatedUser) => {
       if (!updatedUser) {
@@ -63,7 +64,7 @@ router.put('/:id', (req, res) => {
     });
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', mustbe.authorized('user'), (req, res) => {
   User.remove({ _id: req.params.id })
     .then((deleteUser) => {
       if (deleteUser.result.n === 0) {

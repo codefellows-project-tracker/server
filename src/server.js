@@ -2,11 +2,14 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const PassportLocal = require('passport-local');
-const jwt = require('jsonwebtoken');
 const debug = require('debug')('cpt:server');
 const cors = require('cors');
+const mustbe = require('mustbe');
 
-const config = require('./config');
+// Configure mustbe
+const mustbeConfig = require('./mustbe-config');
+mustbe.configure(mustbeConfig);
+
 const userRouter = require('./routes/user');
 const projectRouter = require('./routes/project');
 const User = require('./models/user');
@@ -56,5 +59,13 @@ apiRouter.post('/login', (req, res, next) => {
 
 // Mount the API
 app.use('/api', apiRouter);
+
+app.use((err, req, res, next) => { // eslint-disable-line
+  if (err.isBoom) {
+    return res.status(err.output.statusCode).json(err.output.payload);
+  }
+  debug(err);
+  return res.status(500).json({ message: 'Internal Server Error' });
+});
 
 module.exports = app;
