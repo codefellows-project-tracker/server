@@ -2,7 +2,6 @@ const express = require('express');
 
 const User = require('../models/user');
 const errorHelper = require('../errorHelper');
-const isAuthenticated = require('../authMiddleware');
 
 const router = new express.Router();
 
@@ -47,7 +46,7 @@ router.post('/', (req, res) => {
     });
 });
 
-router.put('/:id', isAuthenticated(['user'], 'user'), (req, res) => {
+router.put('/:id', (req, res) => {
   User.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true })
     .then((updatedUser) => {
       if (!updatedUser) {
@@ -64,7 +63,7 @@ router.put('/:id', isAuthenticated(['user'], 'user'), (req, res) => {
     });
 });
 
-router.delete('/:id', isAuthenticated(['user'], 'user'), (req, res) => {
+router.delete('/:id', (req, res) => {
   User.remove({ _id: req.params.id })
     .then((deleteUser) => {
       if (deleteUser.result.n === 0) {

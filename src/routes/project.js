@@ -2,7 +2,6 @@ const express = require('express');
 
 const Project = require('../models/project');
 const errorHelper = require('../errorHelper');
-const isAuthenticated = require('../authMiddleware');
 
 const router = new express.Router();
 
@@ -32,7 +31,7 @@ router.get('/:id', (req, res) => {
     });
 });
 
-router.post('/', isAuthenticated(['user'], 'project'), (req, res) => {
+router.post('/', (req, res) => {
   const project = new Project(req.body);
   project.save()
     .then((newProject) => {
@@ -46,7 +45,7 @@ router.post('/', isAuthenticated(['user'], 'project'), (req, res) => {
     });
 });
 
-router.put('/:id', isAuthenticated(['user'], 'project'), (req, res) => {
+router.put('/:id', (req, res) => {
   Project.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true })
     .then((updatedProject) => {
       if (!updatedProject) {
@@ -62,7 +61,7 @@ router.put('/:id', isAuthenticated(['user'], 'project'), (req, res) => {
     });
 });
 
-router.delete('/:id', isAuthenticated(['user'], 'project'), (req, res) => {
+router.delete('/:id', (req, res) => {
   Project.remove({ _id: req.params.id })
     .then((deletedProject) => {
       if (deletedProject.result.n === 0) {
