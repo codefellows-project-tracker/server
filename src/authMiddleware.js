@@ -31,7 +31,6 @@ module.exports = function(roles, model) {
               }
 
               if (user._id !== tokenData._id) {
-
                 return errorHelper(res, 401)(new Error('Not authorized'));
               }
 
@@ -42,7 +41,22 @@ module.exports = function(roles, model) {
               errorHelper(res, 401)(new Error('Not authorized'))
             );
         } else if (model === 'project') {
+          Project.findOne({ _id: req.params.id })
+            .then((project) => {
+              if (!project) {
+                return errorHelper(res, 401)(new Error('Not authorized'));
+              }
 
+              if (project.users.indexOf(tokenData._id) === -1) {
+                return errorHelper(res, 401)(new Error('Not authorized'));
+              }
+
+              req.user = tokenData;
+              return next();
+            })
+            .catch(() =>
+              errorHelper(res, 401)(new Error('Not authorized'))
+            );
         }
 
         req.user = tokenData;
