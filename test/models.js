@@ -44,4 +44,28 @@ describe('Test models', () => {
           });
       });
   });
+
+  it('should compare valid password', () => (
+    new User({
+      name: 'Gio',
+      email: 'giodamelio@gmail.com',
+      password: 'hunter2',
+    }).save()
+      .then((user) => user.comparePassword('hunter2'))
+      .then((user) => {
+        expect(user.name).to.equal('Gio');
+      })
+  ));
+
+  it('should compare invalid password', () => (
+    new User({
+      name: 'Gio',
+      email: 'giodamelio@gmail.com',
+      password: 'hunter2',
+    }).save()
+      .then((user) => user.comparePassword('huntear2'))
+      .catch((err) => {
+        expect(err.message).to.equal('Password did not match');
+      })
+  ));
 });
