@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const config = require('./config');
 const errorHelper = require('./errorHelper');
 
-module.exports = function(...roles) {
+module.exports = function(roles) {
   return function IsAuthenticated(req, res, next) {
     const header = req.get('authorization');
     if (!header) {
