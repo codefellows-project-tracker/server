@@ -49,7 +49,7 @@ describe('/api/login', () => {
         })
   ));
 
-  it('should fail to login', () => (
+  it('should fail on incorrect password', () => (
       supertest(server)
         .post('/api/login')
         .send({
@@ -58,7 +58,21 @@ describe('/api/login', () => {
         })
         .expect(401)
         .expect((res) => {
-          expect(res.body.message).to.equal('Username or password is incorrect');
+          expect(res.body.message).to.equal('Email or password is incorrect');
+        })
+  ));
+
+
+  it('should fail on incorrect email', () => (
+      supertest(server)
+        .post('/api/login')
+        .send({
+          email: 'giodamelio1@gmail.com',
+          password: 'hunter2',
+        })
+        .expect(401)
+        .expect((res) => {
+          expect(res.body.message).to.equal('Email or password is incorrect');
         })
   ));
 });

@@ -25,9 +25,11 @@ router.get('/:id', (req, res) => {
       return res.json(user);
     })
     .catch((err) => {
+      /* istanbul ignore else */
       if (err.name === 'CastError') {
         return errorHelper(res, 404)(err);
       }
+      /* istanbul ignore next */
       return errorHelper(res, 500)(err);
     });
 });
@@ -42,9 +44,11 @@ router.post('/', (req, res) => {
       res.json(newerUser);
     })
     .catch((err) => {
+      /* istanbul ignore else */
       if (err.name === 'MongoError' && err.code === 11000) {
         return errorHelper(res, 400, 'Duplicate key')(err);
       }
+      /* istanbul ignore next */
       return errorHelper(res, 500)(err);
     });
 });

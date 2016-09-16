@@ -9,9 +9,16 @@ const Project = require('./models/project');
 module.exports = function(mustbeConfig) {
   mustbeConfig.routeHelpers((rh) => {
     rh.getUser((req, cb) => {
-      const token = authHeader.parse(req.get('authorization')).token;
-      if (!token) {
-        return cb(boom.unauthorized('Authentication token does not exist'));
+      const header = req.get('authorization');
+      if (!header) {
+        return cb(boom.unauthorized('Authentication header does not exist'));
+      }
+
+      let token;
+      try {
+        token = authHeader.parse(header).token;
+      } catch (err) {
+        return cb(boom.unauthorized('Authentication header is malformed'));
       }
 
       return jwt.verify(token, config.SECRET, (err, tokenData) => {
@@ -21,16 +28,16 @@ module.exports = function(mustbeConfig) {
 
         return User.findOne({ _id: tokenData._id })
           .then((user) => {
-            cb(null, user);
+            if (!user) {
+              return cb(boom.unauthorized('User does not exist'));
+            }
+
+            return cb(null, user);
           })
           .catch(() => {
-            cb(boom.unauthorized('Mongo query error'));
+            cb(boom.unauthorized('User does not exist'));
           });
       });
-    });
-
-    rh.notAuthorized((req, res) => {
-      res.status(401).json({ message: 'Not Authorized' });
     });
 
     rh.parameterMaps((params) => {
@@ -67,7 +74,7 @@ module.exports = function(mustbeConfig) {
           }
 
           if (project.users.indexOf(identity.user._id.toString()) === -1) {
-            return cb(null, false);
+            return cb(boom.unauthorized('Insuffiecnt permission'));
           }
 
           return cb(null, true);

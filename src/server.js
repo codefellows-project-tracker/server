@@ -20,7 +20,6 @@ passport.use(new PassportLocal({ usernameField: 'email' }, (email, password, don
   User.findOne({ email })
     .then((user) => {
       if (!user) {
-        debug(`User with email "${user.email}" does not exist`);
         return done(null, false, { message: 'Email or password incorrect' });
       }
 
@@ -30,9 +29,8 @@ passport.use(new PassportLocal({ usernameField: 'email' }, (email, password, don
       // Successful login
       done(null, user);
     })
-    .catch((err) => {
+    .catch(() => {
       // Password incorrect
-      debug('Password is incorrect', err);
       done(null, false, { message: 'Email or password incorrect' });
     });
 }));
@@ -49,8 +47,7 @@ apiRouter.use('/project', projectRouter);
 // Handle auth
 apiRouter.post('/login', (req, res, next) => {
   passport.authenticate('local', (err, user) => {
-    if (err) return next(err);
-    if (!user) return res.status(401).json({ message: 'Username or password is incorrect' });
+    if (!user) return res.status(401).json({ message: 'Email or password is incorrect' });
 
     const token = user.getToken();
     return res.status(200).json({ token });
@@ -64,7 +61,9 @@ app.use((err, req, res, next) => { // eslint-disable-line
   if (err.isBoom) {
     return res.status(err.output.statusCode).json(err.output.payload);
   }
+  /* istanbul ignore next */
   debug(err);
+  /* istanbul ignore next */
   return res.status(500).json({ message: 'Internal Server Error' });
 });
 
