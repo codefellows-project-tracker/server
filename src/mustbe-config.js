@@ -9,9 +9,16 @@ const Project = require('./models/project');
 module.exports = function(mustbeConfig) {
   mustbeConfig.routeHelpers((rh) => {
     rh.getUser((req, cb) => {
-      const token = authHeader.parse(req.get('authorization')).token;
-      if (!token) {
-        return cb(boom.unauthorized('Authentication token does not exist'));
+      const header = req.get('authorization');
+      if (!header) {
+        return cb(boom.unauthorized('Authentication header does not exist'));
+      }
+
+      let token;
+      try {
+        token = authHeader.parse(header).token;
+      } catch (err) {
+        return cb(boom.unauthorized('Authentication header is malformed'));
       }
 
       return jwt.verify(token, config.SECRET, (err, tokenData) => {
