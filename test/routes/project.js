@@ -131,12 +131,12 @@ describe('/api/project', () => {
 
     it('should 404 on invalid project', function() {
       return supertest(server)
-        .put('/api/project/57d6e7c2f532ad68ac3d9424')
+        .put('/api/project/57d6e7c2f452ad68ac3d9424')
         .send({ name: 'HAHA' })
         .set('Authorization', `Bearer ${this.token}`)
-        .expect(401)
+        .expect(404)
         .then((res) => {
-          expect(res.body.message).to.equal('Not Authorized');
+          expect(res.body.message).to.equal('Project does not exist');
         });
     });
 
@@ -144,9 +144,9 @@ describe('/api/project', () => {
       return supertest(server)
         .put('/api/project/haha')
         .set('Authorization', `Bearer ${this.token}`)
-        .expect(401)
+        .expect(404)
         .then((res) => {
-          expect(res.body.message).to.contain('Not Authorized');
+          expect(res.body.message).to.contain('Invalid project id');
         });
     });
   });
@@ -167,9 +167,9 @@ describe('/api/project', () => {
       return supertest(server)
         .delete('/api/project/57d6e7c2f532ad68ac3d9424')
         .set('Authorization', `Bearer ${this.token}`)
-        .expect(401)
+        .expect(404)
         .then((res) => {
-          expect(res.body.message).to.equal('Not Authorized');
+          expect(res.body.message).to.equal('Project does not exist');
         });
     });
 
@@ -177,9 +177,9 @@ describe('/api/project', () => {
       return supertest(server)
         .delete('/api/project/haha')
         .set('Authorization', `Bearer ${this.token}`)
-        .expect(401)
+        .expect(404)
         .then((res) => {
-          expect(res.body.message).to.equal('Not Authorized');
+          expect(res.body.message).to.equal('Invalid project id');
         });
     });
   });

@@ -48,7 +48,7 @@ module.exports = function(mustbeConfig) {
         return cb(null, true);
       }
 
-      return cb(null, false);
+      return cb(boom.unauthorized('User not found'));
     });
 
     activities.can('any-user', (identity, params, cb) => {
@@ -63,7 +63,7 @@ module.exports = function(mustbeConfig) {
       return Project.findOne({ _id: params.id })
         .then((project) => {
           if (!project) {
-            return cb(null, false);
+            return cb(boom.notFound('Project does not exist'));
           }
 
           if (project.users.indexOf(identity.user._id.toString()) === -1) {
@@ -72,7 +72,7 @@ module.exports = function(mustbeConfig) {
 
           return cb(null, true);
         })
-        .catch(() => cb(null, false));
+        .catch(() => cb(boom.notFound('Invalid project id')));
     });
   });
 };

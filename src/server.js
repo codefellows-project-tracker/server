@@ -50,7 +50,7 @@ apiRouter.use('/project', projectRouter);
 apiRouter.post('/login', (req, res, next) => {
   passport.authenticate('local', (err, user) => {
     if (err) return next(err);
-    if (!user) return res.status(401).json({ error: 'Username or password is incorrect' });
+    if (!user) return res.status(401).json({ message: 'Username or password is incorrect' });
 
     const token = user.getToken();
     return res.status(200).json({ token });

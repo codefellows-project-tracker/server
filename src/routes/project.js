@@ -48,34 +48,14 @@ router.post('/', mustbe.authorized('any-user'), (req, res) => {
 
 router.put('/:id', mustbe.authorized('project'), (req, res) => {
   Project.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true })
-    .then((updatedProject) => {
-      if (!updatedProject) {
-        return errorHelper(res, 404)(new Error('Project not found'));
-      }
-      return res.json(updatedProject);
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        return errorHelper(res, 404)(err);
-      }
-      return errorHelper(res, 500)(err);
-    });
+    .then((updatedProject) => res.json(updatedProject))
+    .catch(errorHelper(res, 500));
 });
 
 router.delete('/:id', mustbe.authorized('project'), (req, res) => {
   Project.remove({ _id: req.params.id })
-    .then((deletedProject) => {
-      if (deletedProject.result.n === 0) {
-        return errorHelper(res, 404)(new Error('Project not found'));
-      }
-      return res.json(deletedProject);
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        return errorHelper(res, 404)(err);
-      }
-      return errorHelper(res, 500)(err);
-    });
+    .then((deletedProject) => res.json(deletedProject))
+    .catch(errorHelper(res, 500));
 });
 
 module.exports = router;

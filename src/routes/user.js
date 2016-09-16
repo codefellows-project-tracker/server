@@ -50,34 +50,16 @@ router.post('/', (req, res) => {
 router.put('/:id', mustbe.authorized('user'), (req, res) => {
   User.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true })
     .then((updatedUser) => {
-      if (!updatedUser) {
-        return errorHelper(res, 404)(new Error('User not found'));
-      }
       updatedUser.password = undefined; // eslint-disable-line no-param-reassign
       return res.json(updatedUser);
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        return errorHelper(res, 404)(err);
-      }
-      return errorHelper(res, 500)(err);
-    });
+    .catch(errorHelper(res, 500));
 });
 
 router.delete('/:id', mustbe.authorized('user'), (req, res) => {
   User.remove({ _id: req.params.id })
-    .then((deleteUser) => {
-      if (deleteUser.result.n === 0) {
-        return errorHelper(res, 404)(new Error('User not found'));
-      }
-      return res.json(deleteUser);
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        return errorHelper(res, 404)(err);
-      }
-      return errorHelper(res, 500)(err);
-    });
+    .then((deleteUser) => res.json(deleteUser))
+    .catch(errorHelper(res, 500));
 });
 
 module.exports = router;

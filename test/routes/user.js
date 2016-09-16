@@ -110,7 +110,7 @@ describe('/api/user', () => {
         .set('Authorization', `Bearer ${this.token}`)
         .expect(401)
         .then((res) => {
-          expect(res.body.message).to.equal('Not Authorized');
+          expect(res.body.message).to.equal('User not found');
         });
     });
 
@@ -120,7 +120,7 @@ describe('/api/user', () => {
         .set('Authorization', `Bearer ${this.token}`)
         .expect(401)
         .then((res) => {
-          expect(res.body.message).to.equal('Not Authorized');
+          expect(res.body.message).to.equal('User not found');
         });
     });
   });
@@ -143,7 +143,7 @@ describe('/api/user', () => {
         .set('Authorization', `Bearer ${this.token}`)
         .expect(401)
         .then((res) => {
-          expect(res.body.message).to.equal('Not Authorized');
+          expect(res.body.message).to.equal('User not found');
         });
     });
 
@@ -153,7 +153,7 @@ describe('/api/user', () => {
         .set('Authorization', `Bearer ${this.token}`)
         .expect(401)
         .then((res) => {
-          expect(res.body.message).to.equal('Not Authorized');
+          expect(res.body.message).to.equal('User not found');
         });
     });
   });
