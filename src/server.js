@@ -57,13 +57,12 @@ apiRouter.post('/login', (req, res, next) => {
 // Mount the API
 app.use('/api', apiRouter);
 
+/* istanbul ignore next */
 app.use((err, req, res, next) => { // eslint-disable-line
   if (err.isBoom) {
     return res.status(err.output.statusCode).json(err.output.payload);
   }
-  /* istanbul ignore next */
   debug(err);
-  /* istanbul ignore next */
   return res.status(500).json({ message: 'Internal Server Error' });
 });
 
