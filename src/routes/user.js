@@ -36,8 +36,10 @@ router.post('/', (req, res) => {
   const user = new User(req.body);
   user.save()
     .then((newUser) => {
-      newUser.password = undefined; // eslint-disable-line no-param-reassign
-      res.json(newUser);
+      const newerUser = newUser.toObject();
+      newerUser.password = undefined; // eslint-disable-line no-param-reassign
+      newerUser.token = newUser.getToken();
+      res.json(newerUser);
     })
     .catch((err) => {
       if (err.name === 'MongoError' && err.code === 11000) {
