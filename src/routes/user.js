@@ -39,6 +39,8 @@ router.post('/', (req, res) => {
   user.save()
     .then((newUser) => {
       const newerUser = newUser.toObject();
+      //you should probably do this as `delete newerUser.password` setting things to
+      //undefined is generally seen as an antipattern since it bypasses garbage collection
       newerUser.password = undefined; // eslint-disable-line no-param-reassign
       newerUser.token = newUser.getToken();
       res.json(newerUser);
